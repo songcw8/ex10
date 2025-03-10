@@ -9,9 +9,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-
-import static org.example.model.ModelPlatform.GROQ;
-import static org.example.model.ModelPlatform.TOGETHER;
+import java.util.HashMap;
+import java.util.Map;
 
 public class APIService {
     private static final APIService instance = new APIService();
@@ -19,6 +18,8 @@ public class APIService {
     private final Dotenv dotenv = Dotenv.load();
     private final String groqToken;
     private final String togetherToken;
+    private final String groqGuide;
+    private final String togetherGuide;
 
     public static APIService getInstance() {
         return instance;
@@ -27,6 +28,8 @@ public class APIService {
     private APIService() {
         groqToken = dotenv.get("GROQ_KEY");
         togetherToken = dotenv.get("TOGETHER_KEY");
+        groqGuide = dotenv.get("GROQ_GUIDE");
+        togetherGuide = dotenv.get("TOGETHER_GUIDE");
     }
 
     public String callAPI(APIParam apiParam) throws Exception {
@@ -37,12 +40,12 @@ public class APIService {
             case GROQ -> {
                 url = "https://api.groq.com/openai/v1/chat/completions";
                 token = groqToken;
-                instruction = "간곡하게 말하오니 한글 쓰세요";
+                instruction = groqGuide;
             }
             case TOGETHER -> {
                 url = "https://api.together.xyz/v1/chat/completions";
                 token = togetherToken;
-                instruction = "제발 제발 한글 쓰세요";
+                instruction = togetherGuide;
             }
             default -> throw new Exception("Unsupported platform");
         }
@@ -73,10 +76,8 @@ public class APIService {
         ObjectMapper objectMapper = new ObjectMapper();
         ModelResponse modelResponse = objectMapper.readValue(responseBody, ModelResponse.class);
         String content = modelResponse.choices().get(0).message().content();
-        return """
-            {
-                "content": "%s"
-            }
-        """.formatted(content);
+        Map<String, String> map = new HashMap<>();
+        map.put("content", content);
+        return objectMapper.writeValueAsString(map);
     }
 }

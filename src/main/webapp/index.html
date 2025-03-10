@@ -3,6 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>메뉴 추천기</title>
+    <style>
+        @font-face {
+            font-family: 'CookieRun-Regular';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        *{
+            font-family: CookieRun-Regular, Serif;
+            margin: 0;
+            padding: 0;
+        }
+        body > div{
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #controller > button{
+            width: 100%;
+            padding: 0.5rem;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -20,5 +44,24 @@
         <button>묻기</button>
     </form>
 </div>
+<script>
+    const controller = document.querySelector("#controller");
+    controller.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        // alert("폼폼 폼클린징");
+        const prompt = document.querySelector("#prompt").value;
+        const model = document.querySelector("#model").value;
+        // alert(`${prompt} ${model}`);
+
+        const response = await fetch(`./api?prompt=${prompt}&model=${model}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const json = await response.json();
+        //alert(JSON.stringify(json));
+        document.querySelector("" + "#response").textContent = json.content;
+    })
+</script>
 </body>
 </html>
