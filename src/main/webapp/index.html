@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>메뉴 추천기</title>
@@ -10,21 +10,20 @@
             font-weight: normal;
             font-style: normal;
         }
-        *{
-            font-family: CookieRun-Regular, Serif;
+        * {
+            font-family: CookieRun-Regular,serif;
             margin: 0;
             padding: 0;
         }
-        body > div{
+        body > div {
             padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.5rem;
         }
-        #controller > button{
+        #controller * {
             width: 100%;
-            padding: 0.5rem;
         }
     </style>
 </head>
@@ -45,23 +44,49 @@
     </form>
 </div>
 <script>
+    // 폼 요소 가져오기
     const controller = document.querySelector("#controller");
+
+    // 폼 제출 이벤트 리스너 추가
     controller.addEventListener("submit", async (event) => {
+        // 기본 폼 제출 동작 막기
         event.preventDefault();
-        // alert("폼폼 폼클린징");
+
+        // 폼 제출 중복 방지를 위해 폼 비활성화 (선택적)
+        controller.setAttribute("disabled", true);
+
+        // 입력된 프롬프트와 모델 선택 값 가져오기
         const prompt = document.querySelector("#prompt").value;
         const model = document.querySelector("#model").value;
-        // alert(`${prompt} ${model}`);
 
-        const response = await fetch(`./api?prompt=${prompt}&model=${model}`, {
-            headers: {
-                "Content-Type": "application/json"
+        // API 호출
+        try {
+            const response = await fetch(`./api?prompt=${prompt}&model=${model}`, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            // 응답이 성공적인지 확인
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
-        const json = await response.json();
-        //alert(JSON.stringify(json));
-        document.querySelector("" + "#response").textContent = json.content;
-    })
+
+            // JSON 응답 파싱
+            const json = await response.json();
+
+            // 응답 내용을 결과 영역에 표시
+            document.querySelector("#response").textContent = json.content;
+
+        } catch (error) {
+            // 에러 발생 시 에러 메시지 표시
+            console.error("API 호출 중 오류 발생:", error);
+            document.querySelector("#response").textContent = "오류가 발생했습니다. 다시 시도해주세요.";
+        } finally {
+            // 폼 활성화 (성공 또는 실패 후 항상 실행)
+            controller.removeAttribute("disabled");
+        }
+    });
 </script>
 </body>
 </html>
