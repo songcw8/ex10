@@ -2,11 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>메뉴 추천기</title>
 </head>
 <body>
-  <p>
-    안녕 세상아! 너 뭔데
-  </p>
+<div>
+    <div id="response">여기에 결과가 표시됩니다</div>
+    <form id="controller">
+        <div>
+            <input id="prompt">
+        </div>
+        <div>
+            <select id="model">
+                <option value="GROQ_LLAMA">GROQ</option>
+                <option value="TOGETHER_LLAMA">TOGETHER</option>
+            </select>
+        </div>
+        <button>묻기</button>
+    </form>
+</div>
 </body>
 </html>
