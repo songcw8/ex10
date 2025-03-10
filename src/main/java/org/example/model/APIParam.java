@@ -1,4 +1,4 @@
-package org.model;
+package org.example.model;
 
 public record APIParam(String prompt, String model) {
 
